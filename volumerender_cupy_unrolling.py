@@ -52,7 +52,7 @@ def main():
         image = cp.zeros((camera_grid.shape[1], camera_grid.shape[2], 3))
     
         for dataslice in camera_grid:
-            dataslice_cp = cp.array(dataslice)  # Convert dataslice to CuPy array
+            dataslice_cp = cp.array(dataslice)  
             r, g, b, a = transferFunction(cp.log(dataslice_cp))
             image[:,:,0] = a*r + (1-a)*image[:,:,0]
             image[:,:,1] = a*g + (1-a)*image[:,:,1]
