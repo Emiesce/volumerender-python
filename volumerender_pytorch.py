@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 import h5py as h5
+from timeit import default_timer as timer
 from scipy.interpolate import interpn
 
 def transferFunction(x):
