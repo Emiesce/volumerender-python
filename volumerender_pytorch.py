@@ -32,7 +32,7 @@ def main():
     # Do Volume Rendering at Different Viewing Angles
     Nangles = 10
     for i in range(Nangles):
-
+        start = timer()
         print('Rendering Scene ' + str(i+1) + ' of ' + str(Nangles) + '.\n')
 
         # Camera Grid / Query Points -- rotate camera view
@@ -57,6 +57,8 @@ def main():
             image[:,:,0] = a*r + (1-a)*image[:,:,0]
             image[:,:,1] = a*g + (1-a)*image[:,:,1]
             image[:,:,2] = a*b + (1-a)*image[:,:,2]
+        end = timer()
+        print('Time to render scene: ' + str(end - start) + ' seconds.\n')
 
         image = torch.clamp(image, 0.0, 1.0)
 
