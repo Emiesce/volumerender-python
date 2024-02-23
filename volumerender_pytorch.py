@@ -7,7 +7,7 @@ from scipy.interpolate import interpn
 def transferFunction(x):
     calculation_1 = torch.exp( -(x - 9.0)**2/1.0 )
     calculation_2 = torch.exp( -(x - 3.0)**2/0.1 )
-    calculation_3 = torch.exp( -(x - (-3.0))**2/0.5 )  # Fixed the negative sign
+    calculation_3 = torch.exp( -(x + 3.0)**2/0.5 )  
 
     r = 1.0*(calculation_1) + 0.1*(calculation_2) + 0.1*(calculation_3)
     g = 1.0*(calculation_1) + 1.0*(calculation_2) + 0.1*(calculation_3)
@@ -86,3 +86,4 @@ def main():
 
 if __name__== "__main__":
     main()
+
