@@ -10,7 +10,7 @@ def transferFunction(x):
     calculation_3 = cp.exp( -(x - -3.0)**2/0.5 )
 	
     r = 1.0*(calculation_1)+0.1*(calculation_2)+0.1*(calculation_3)
-    g = 1.0*(calculation_1+1.0*(calculation_2)+0.1*(calculation_3)
+    g = 1.0*(calculation_1)+1.0*(calculation_2)+0.1*(calculation_3)
     b = 0.1*(calculation_1)+0.1*(calculation_2)+1.0*(calculation_3)
     a = 0.6*(calculation_1)+0.1*(calculation_2)+0.01*(calculation_3)
     return r, g, b, a
