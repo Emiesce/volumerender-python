@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from timeit import default_timer as timer
 import h5py as h5
 from scipy.interpolate import interpn
 
@@ -37,7 +38,7 @@ def main():
 	# Do Volume Rendering at Different Veiwing Angles
 	Nangles = 10
 	for i in range(Nangles):
-		
+		start = timer()
 		print('Rendering Scene ' + str(i+1) + ' of ' + str(Nangles) + '.\n')
 	
 		# Camera Grid / Query Points -- rotate camera view
@@ -61,6 +62,9 @@ def main():
 			image[:,:,0] = a*r + (1-a)*image[:,:,0]
 			image[:,:,1] = a*g + (1-a)*image[:,:,1]
 			image[:,:,2] = a*b + (1-a)*image[:,:,2]
+
+		end = timer()
+		print(f"Time to render scene {i+1}: {end - start} seconds")
 		
 		image = np.clip(image,0.0,1.0)
 		
@@ -88,9 +92,6 @@ def main():
 	
 
 	return 0
-	
 
-
-  
 if __name__== "__main__":
   main()
