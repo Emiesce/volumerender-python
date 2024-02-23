@@ -1,6 +1,7 @@
 import cupy as cp
 import matplotlib.pyplot as plt
 import h5py as h5
+from timeit import default_timer as timer
 from scipy.interpolate import interpn
 
 def transferFunction(x):
@@ -31,6 +32,7 @@ def main():
 
     Nangles = 10
     for i in range(Nangles):
+        start = timer()
         print(f'Rendering Scene {i + 1} of {Nangles}.\n')
 
         angle = cp.pi / 2 * i / Nangles
@@ -49,6 +51,8 @@ def main():
             image[:, :, 0] = a * r + (1 - a) * image[:, :, 0]
             image[:, :, 1] = a * g + (1 - a) * image[:, :, 1]
             image[:, :, 2] = a * b + (1 - a) * image[:, :, 2]
+        end = timer()
+        print('Time to render scene: ' + str(end - start) + ' seconds.\n')
 
         image = cp.clip(image, 0.0, 1.0)
 
