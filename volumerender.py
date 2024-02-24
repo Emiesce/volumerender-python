@@ -100,7 +100,7 @@ def main():
 	plt.savefig('projection.png',dpi=240,  bbox_inches='tight', pad_inches = 0)
 	plt.show()
 
-	return average
+	return np.sum(average)
 
 # Profile the main function using the LineProfiler
 def profile_line_profiler():
@@ -113,6 +113,7 @@ if __name__== "__main__":
 	n_tests = 20
 	total_time = np.zeros(n_tests)
 	for i in range(n_tests):
+		print(f"Running main() test {i+1} of {n_tests}")
 		total_time[i] = main()
 
 	# Print mean and standard deviation and max/min of running main()
@@ -120,5 +121,5 @@ if __name__== "__main__":
 	print(f"Standard deviation of time for main(): {np.std(total_time)} seconds")
 	print(f"Max time for main(): {np.max(total_time)} seconds")
 	print(f"Min time for main(): {np.min(total_time)} seconds")
-	
+
 	profile_line_profiler()
