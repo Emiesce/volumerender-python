@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import h5py as h5
 from timeit import default_timer as timer
 from scipy.interpolate import interpn
+from cupyx.profiler import benchmark
+from line_profiler import LineProfiler
 
 # Define the transfer function to adjust color intensity based on density values
 def transferFunction(x):
@@ -19,6 +21,10 @@ def transferFunction(x):
     return r, g, b, a
 
 def main():
+    # Array to store time for each rendering
+    rendering_times_cpu = cp.zeros(Nangles)
+    rendering_times_gpu = cp.zeros(Nangles)
+
     # Load density data from an HDF5 file
     f = h5.File('datacube.hdf5', 'r')
     datacube = cp.array(f['density'])
@@ -39,7 +45,12 @@ def main():
     # Render scenes from different angles
     Nangles = 10
     for i in range(Nangles):
-        start = timer()
+        start_gpu = cp.cuda.Event()
+        end_gpu = cp.cuda.Event()
+
+        start_gpu.record()
+        start_cpu = timer()
+
         print(f'Rendering Scene {i + 1} of {Nangles}.\n')
 
         # Calculate rotation angle and apply rotation to the camera grid
@@ -60,8 +71,14 @@ def main():
             image[:, :, 0] = a * r + (1 - a) * image[:, :, 0]
             image[:, :, 1] = a * g + (1 - a) * image[:, :, 1]
             image[:, :, 2] = a * b + (1 - a) * image[:, :, 2]
-        end = timer()
-        print('Time to render scene: ' + str(end - start) + ' seconds.\n')
+
+        end_cpu = timer()
+        end_gpu.record()
+
+        print('Time to render scene (CPU): ' + str(end_cpu - start_cpu) + ' seconds.\n')
+        print('Time to render scene (GPU): ' + str(cp.cuda.get_elapsed_time(start_gpu, end_gpu)) + ' milliseconds.\n')
+        rendering_times_cpu[i] = end_cpu - start_cpu
+        rendering_times_gpu[i] = cp.cuda.get_elapsed_time(start_gpu, end_gpu)
 
         # Clip the image values to be between 0 and 1 before displaying
         image = cp.clip(image, 0.0, 1.0)
@@ -71,6 +88,16 @@ def main():
         plt.imshow(cp.asnumpy(image))
         plt.axis('off')
         plt.savefig(f'volumerender{i}.png', dpi=240, bbox_inches='tight', pad_inches=0)
+
+    # Print mean and standard deviation of rendering times for CPU
+    print('Mean rendering time (CPU): ' + str(cp.mean(rendering_times_cpu)) + ' seconds.')
+    print('Standard deviation of rendering times (CPU): ' + str(cp.std(rendering_times_cpu)) + ' seconds.')
+    print('Max and min rendering times (CPU): ' + str(cp.max(rendering_times_cpu)) + ' seconds, ' + str(cp.min(rendering_times_cpu)) + ' seconds.\n')
+
+    # Print mean and standard deviation of rendering times for GPU
+    print('Mean rendering time (GPU): ' + str(cp.mean(rendering_times_gpu)) + ' milliseconds.')
+    print('Standard deviation of rendering times (GPU): ' + str(cp.std(rendering_times_gpu)) + ' milliseconds.')
+    print('Max and min rendering times (GPU): ' + str(cp.max(rendering_times_gpu)) + ' milliseconds, ' + str(cp.min(rendering_times_gpu)) + ' milliseconds.\n')
 
     # Generate and save a projection of the datacube along an axis
     plt.figure(figsize=(4, 4), dpi=80)
@@ -83,5 +110,14 @@ def main():
 
     return 0
 
+# Profile the main function using the LineProfiler
+def profile_line_profiler():
+    profiler = LineProfiler()
+    profiler.add_function(main)
+    profiler.run('main()')
+    profiler.print_stats()
+
 if __name__ == "__main__":
+    print(benchmark(main, n_repeat=20)) # Benchmark using CuPy profiler
+    profile_line_profiler() # Profile using LineProfiler
     main()

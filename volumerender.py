@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from timeit import default_timer as timer
 import h5py as h5
 from scipy.interpolate import interpn
+from line_profiler import LineProfiler
 
 """
 Create Your Own Volume Rendering (With Python)
@@ -37,6 +38,9 @@ def main():
 	
 	# Do Volume Rendering at Different Veiwing Angles
 	Nangles = 10
+	# Intialise 1D empty array of size Nangles
+	average = np.zeros(Nangles)
+
 	for i in range(Nangles):
 		start = timer()
 		print('Rendering Scene ' + str(i+1) + ' of ' + str(Nangles) + '.\n')
@@ -65,7 +69,9 @@ def main():
 
 		end = timer()
 		print(f"Time to render scene {i+1}: {end - start} seconds")
-		
+		# Add to average
+		average[i] = end - start
+
 		image = np.clip(image,0.0,1.0)
 		
 		# Plot Volume Rendering
@@ -77,7 +83,11 @@ def main():
 		# Save figure
 		plt.savefig('volumerender' + str(i) + '.png',dpi=240,  bbox_inches='tight', pad_inches = 0)
 	
-	
+	# Print mean and standard deviation and max/min of rendering times
+	print(f"Mean rendering time: {np.mean(average)} seconds")
+	print(f"Standard deviation of rendering time: {np.std(average)} seconds")
+	print(f"Max rendering time: {np.max(average)} seconds")
+	print(f"Min rendering time: {np.min(average)} seconds")
 	
 	# Plot Simple Projection -- for Comparison
 	plt.figure(figsize=(4,4), dpi=80)
@@ -93,5 +103,13 @@ def main():
 
 	return 0
 
+# Profile the main function using the LineProfiler
+def profile_line_profiler():
+    profiler = LineProfiler()
+    profiler.add_function(main)
+    profiler.run('main()')
+    profiler.print_stats()
+
 if __name__== "__main__":
-  main()
+	profile_line_profiler()
+	main()
