@@ -23,7 +23,6 @@ def transferFunction(x):
 def main():
     Nangles = 10
     # Array to store time for each rendering
-    rendering_times_cpu = cp.zeros(Nangles)
     rendering_times_gpu = cp.zeros(Nangles)
 
     # Load density data from an HDF5 file
@@ -49,7 +48,6 @@ def main():
         end_gpu = cp.cuda.Event()
 
         start_gpu.record()
-        start_cpu = timer()
 
         print(f'Rendering Scene {i + 1} of {Nangles}.\n')
 
@@ -72,12 +70,9 @@ def main():
             image[:, :, 1] = a * g + (1 - a) * image[:, :, 1]
             image[:, :, 2] = a * b + (1 - a) * image[:, :, 2]
 
-        end_cpu = timer()
         end_gpu.record()
 
-        print('Time to render scene (CPU): ' + str(end_cpu - start_cpu) + ' seconds.\n')
         print('Time to render scene (GPU): ' + str(cp.cuda.get_elapsed_time(start_gpu, end_gpu)) + ' milliseconds.\n')
-        rendering_times_cpu[i] = end_cpu - start_cpu
         rendering_times_gpu[i] = cp.cuda.get_elapsed_time(start_gpu, end_gpu)
 
         # Clip the image values to be between 0 and 1 before displaying
@@ -88,11 +83,6 @@ def main():
         plt.imshow(cp.asnumpy(image))
         plt.axis('off')
         plt.savefig(f'volumerender{i}.png', dpi=240, bbox_inches='tight', pad_inches=0)
-
-    # Print mean and standard deviation of rendering times for CPU
-    print('Mean rendering time (CPU): ' + str(cp.mean(rendering_times_cpu)) + ' seconds.')
-    print('Standard deviation of rendering times (CPU): ' + str(cp.std(rendering_times_cpu)) + ' seconds.')
-    print('Max and min rendering times (CPU): ' + str(cp.max(rendering_times_cpu)) + ' seconds, ' + str(cp.min(rendering_times_cpu)) + ' seconds.\n')
 
     # Print mean and standard deviation of rendering times for GPU
     print('Mean rendering time (GPU): ' + str(cp.mean(rendering_times_gpu)) + ' milliseconds.')
@@ -120,4 +110,3 @@ def profile_line_profiler():
 if __name__ == "__main__":
     print(benchmark(main, n_repeat=20)) # Benchmark using CuPy profiler
     profile_line_profiler() # Profile using LineProfiler
-    main()
