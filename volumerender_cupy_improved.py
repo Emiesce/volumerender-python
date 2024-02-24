@@ -21,6 +21,7 @@ def transferFunction(x):
     return r, g, b, a
 
 def main():
+    Nangles = 10
     # Array to store time for each rendering
     rendering_times_cpu = cp.zeros(Nangles)
     rendering_times_gpu = cp.zeros(Nangles)
@@ -43,7 +44,6 @@ def main():
     image = cp.zeros((N, N, 3), dtype=cp.float32)
 
     # Render scenes from different angles
-    Nangles = 10
     for i in range(Nangles):
         start_gpu = cp.cuda.Event()
         end_gpu = cp.cuda.Event()
