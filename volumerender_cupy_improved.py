@@ -9,7 +9,7 @@ def transferFunction(x):
     # Apply exponential functions to simulate different material densities
     calculation_1 = cp.exp(-(x - 9.0) ** 2 / 1.0)
     calculation_2 = cp.exp(-(x - 3.0) ** 2 / 0.1)
-    calculation_3 = cp.exp(-(x - -3.0) ** 2 / 0.5)
+    calculation_3 = cp.exp(-(x + 3.0) ** 2 / 0.5)
 
     # Calculate RGBA values based on the density calculations
     r = 1.0 * calculation_1 + 0.1 * calculation_2 + 0.1 * calculation_3
