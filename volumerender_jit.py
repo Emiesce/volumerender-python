@@ -12,7 +12,7 @@ Philip Mocz (2020) Princeton Univeristy, @PMocz
 
 Simulate the Schrodinger-Poisson system with the Spectral method
 """
-@jit
+@njit
 def transferFunction(x):
 	r = 1.0*np.exp( -(x - 9.0)**2/1.0 ) +  0.1*np.exp( -(x - 3.0)**2/0.1 ) +  0.1*np.exp( -(x - -3.0)**2/0.5 )
 	g = 1.0*np.exp( -(x - 9.0)**2/1.0 ) +  1.0*np.exp( -(x - 3.0)**2/0.1 ) +  0.1*np.exp( -(x - -3.0)**2/0.5 )
@@ -21,6 +21,7 @@ def transferFunction(x):
 	
 	return r,g,b,a
 
+@njit
 def main():
 	""" Volume Rendering """
 	
