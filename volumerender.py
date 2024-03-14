@@ -22,7 +22,7 @@ def transferFunction(x):
 	return r,g,b,a
 
 
-def main():
+def main(N):
 	""" Volume Rendering """
 	
 	# Load Datacube
@@ -47,7 +47,6 @@ def main():
 	
 		# Camera Grid / Query Points -- rotate camera view
 		angle = np.pi/2 * i / Nangles
-		N = 180
 		c = np.linspace(-N/2, N/2, N)
 		qx, qy, qz = np.meshgrid(c,c,c)
 		qxR = qx
