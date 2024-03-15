@@ -14,6 +14,11 @@ Simulate the Schrodinger-Poisson system with the Spectral method
 """
 
 # Define the transfer function to adjust color intensity based on density values
+
+## Transfer function for volume rendering.
+#  Creates a transfer function for mapping data values to RGBA colors utilizing CuPy.
+#  @param x Input data values.
+#  @return Tuple of RGBA color components.
 def transferFunction(x):
     # Apply exponential functions to simulate different material densities
     calculation_1 = cp.exp(-(x - 9.0) ** 2 / 1.0)
@@ -27,6 +32,11 @@ def transferFunction(x):
     a = 0.6 * calculation_1 + 0.1 * calculation_2 + 0.01 * calculation_3
     return r, g, b, a
 
+## Main function for volume rendering.
+#  Loads data, performs volume rendering, and visualizes the results.
+#  @param Nangles Number of angles for camera rotation.
+#  @param num_runs Number of simulation runs.
+#  @param Cupyx SciPy interpolate used for data interpolation.
 def main(Nangles, num_runs, interpolationMethod):
   """ Volume Rendering """
 
@@ -141,7 +151,7 @@ def main(Nangles, num_runs, interpolationMethod):
   plt.savefig('scene_rendering_times_across_runs.png', dpi=240, bbox_inches='tight', pad_inches=0)
   plt.show()
 
-# Profile the main function using the LineProfiler
+## @brief Profiles the `main` function using the LineProfiler.
 def profile_line_profiler():
     profiler = LineProfiler()
     profiler.add_function(main)
@@ -152,5 +162,5 @@ if __name__== "__main__":
 	interpolation_method = ["nearest", "linear"]
 	for method in interpolation_method:
 		main(10, 10, method)
-
+	# comment out the line below to run the profiler.
 	# profile_line_profiler()
