@@ -13,6 +13,16 @@ Philip Mocz (2020) Princeton Univeristy, @PMocz
 Simulate the Schrodinger-Poisson system with the Spectral method
 """
 
+## @package volume_rendering
+#  This script demonstrates the simulation of the Schrodinger-Poisson system with the Spectral method
+#  and volume rendering techniques in Python.
+
+
+
+## Transfer function for volume rendering.
+#  Creates a transfer function for mapping data values to RGBA colors.
+#  @param x Input data values.
+#  @return Tuple of RGBA color components.
 def transferFunction(x):
 
 	r = 1.0*np.exp( -(x - 9.0)**2/1.0 ) +  0.1*np.exp( -(x - 3.0)**2/0.1 ) +  0.1*np.exp( -(x - -3.0)**2/0.5 )
@@ -21,9 +31,26 @@ def transferFunction(x):
 	a = 0.6*np.exp( -(x - 9.0)**2/1.0 ) +  0.1*np.exp( -(x - 3.0)**2/0.1 ) + 0.01*np.exp( -(x - -3.0)**2/0.5 )
 
 	return r,g,b,a
-
+	
+## Main function for volume rendering.
+#  Loads data, performs volume rendering, and visualizes the results.
+#  @param Nangles Number of angles for camera rotation.
+#  @param num_runs Number of simulation runs.
+#  @param interpolationMethod Method used for data interpolation.
 def main(Nangles, num_runs, interpolationMethod):
 	""" Volume Rendering """
+	
+	    """
+    Main function for volume rendering.
+
+    This function loads a datacube from a file, performs volume rendering from multiple camera angles,
+    and visualizes the results. It uses interpolation for data mapping and calculates performance statistics.
+
+    Parameters:
+    Nangles (int): Number of angles to rotate the camera through.
+    num_runs (int): Number of times to run the simulation for averaging.
+    interpolationMethod (str): Interpolation method to use ('nearest', 'linear', etc.).
+    """
 
 	# Load Datacube
 	with h5.File('datacube.hdf5', 'r') as f:
@@ -138,6 +165,12 @@ def main(Nangles, num_runs, interpolationMethod):
 
 # Profile the main function using the LineProfiler
 def profile_line_profiler():
+	 """
+    Profiles the `main` function using LineProfiler to analyze performance.
+
+    This function adds the main function to the profiler, runs it with predefined parameters,
+    and prints out the profiling stats to help identify performance bottlenecks.
+    """
     profiler = LineProfiler()
     profiler.add_function(main)
     profiler.run('main(10, 1, "nearest")')
