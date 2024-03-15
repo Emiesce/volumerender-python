@@ -7,14 +7,22 @@ from line_profiler import LineProfiler
 from cupyx.scipy.interpolate import interpn as interpn_cupy
 
 """
-Create Your Own Volume Rendering (With Python)
-Philip Mocz (2020) Princeton Univeristy, @PMocz
-
-Simulate the Schrodinger-Poisson system with the Spectral method
+@brief Volume Rendering with Python using the CuPy library and vectorization techniques.
+@details This script demonstrates how to use CuPy for efficient numerical computations
+and volume rendering. The simulation involves the Schrodinger-Poisson system
+with the spectral method. The code includes examples of using CuPy for
+data manipulation, interpolation, and visualization with matplotlib.
 """
 
 # Define the transfer function to adjust color intensity based on density values
 def transferFunction(x):
+	"""
+    @brief Transfer function to adjust color intensity based on density values.
+    @param x: Density value for which color intensity is calculated.
+    @return Tuple of RGBA values.
+    @details Applies cupy exponential functions to simulate different material densities and calculates RGBA values.
+    """
+	
     # Apply exponential functions to simulate different material densities
     calculation_1 = cp.exp(-(x - 9.0) ** 2 / 1.0)
     calculation_2 = cp.exp(-(x - 3.0) ** 2 / 0.1)
@@ -28,6 +36,16 @@ def transferFunction(x):
     return r, g, b, a
 
 def main(Nangles, num_runs, interpolationMethod):
+    """
+    @brief Main function for volume rendering.
+    @param Nangles: Number of angles to render.
+    @param num_runs: Number of runs to perform.
+    @param interpolationMethod: Method for interpolation ('nearest' or 'linear').
+    @details This function loads a data cube, performs volume rendering from different angles,
+    and measures the performance of rendering. It uses CuPy for GPU-accelerated computations.
+    """
+	
+	
   """ Volume Rendering """
 
   # Load Datacube
@@ -145,6 +163,11 @@ def main(Nangles, num_runs, interpolationMethod):
 
 # Profile the main function using the LineProfiler
 def profile_line_profiler():
+	"""
+    @brief Profile the main function using the LineProfiler.
+    @details Adds the main function to the LineProfiler, runs it with predefined parameters,
+    and prints the profiling statistics.
+    """
     profiler = LineProfiler()
     profiler.add_function(main)
     profiler.run('main(10, 1, "nearest")')
@@ -154,5 +177,6 @@ if __name__== "__main__":
 	interpolation_method = ["nearest", "linear"]
 	for method in interpolation_method:
 		main(10, 10, method)
-
+		
+	# Uncomment the line below to enable profiling
 	# profile_line_profiler()
