@@ -13,6 +13,12 @@ Philip Mocz (2020) Princeton Univeristy, @PMocz
 Simulate the Schrodinger-Poisson system with the Spectral method
 """
 
+
+## @brief Transforms intensity values into RGBA color space.
+#  @param x The input intensity value.
+#  @return Tuple of RGBA values.
+#  This function applies a custom transfer function to map intensity values
+#  to RGBA color space, facilitating volume rendering visualization.
 def transferFunction(x):
 
 	r = 1.0*np.exp( -(x - 9.0)**2/1.0 ) +  0.1*np.exp( -(x - 3.0)**2/0.1 ) +  0.1*np.exp( -(x - -3.0)**2/0.5 )
@@ -22,7 +28,20 @@ def transferFunction(x):
 
 	return r,g,b,a
 
+## @brief Main function to perform volume rendering.
+#  @param Nangles Number of angles to render.
+#  @param num_runs Number of runs for each angle.
+#  @param interpolationMethod Method used for interpolation.
+#  This function loads a 3D data cube, performs volume rendering from different angles,
+#  and visualizes the results. It utilizes numpy and matplotlib for computation and visualization.
 def main(Nangles, num_runs, interpolationMethod):
+	""" 
+    Main function for volume rendering.
+    
+    @param Nangles Number of angles for rendering.
+    @param num_runs Number of runs for rendering.
+    @param interpolationMethod Method used for interpolation.
+    """
   """ Volume Rendering """
   
   # Load Datacube
@@ -137,7 +156,8 @@ def main(Nangles, num_runs, interpolationMethod):
   plt.savefig('scene_rendering_times_across_runs.png', dpi=240, bbox_inches='tight', pad_inches=0)
   plt.show()
 
-# Profile the main function using the LineProfiler
+## @brief Profiles the `main` function using LineProfiler.
+#  This function is intended for performance analysis and optimization.
 def profile_line_profiler():
     profiler = LineProfiler()
     profiler.add_function(main)
@@ -149,4 +169,5 @@ if __name__== "__main__":
 	for method in interpolation_method:
 		main(10, 10, method)
 
+	# Uncomment the line below to profile the main function.
 	# profile_line_profiler()
