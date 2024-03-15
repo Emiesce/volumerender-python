@@ -82,7 +82,7 @@ python volumerender_cupy_improved_vectorized.py
 
 ## Data Preparation
 
-The volume rendering scripts requires `datacube.hdf5` file as input. 
+The volume rendering scripts requires the `datacube.hdf5` file to be able to execute. 
 
 ## Performance Profiling
 
