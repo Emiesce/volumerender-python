@@ -1,4 +1,4 @@
-# CuPy
+# CuPy w/ Vectorization
 import cupy as cp
 import matplotlib.pyplot as plt
 from timeit import default_timer as timer
@@ -71,14 +71,16 @@ def main(Nangles, num_runs, interpolationMethod):
       # Interpolate onto Camera Grid
       camera_grid = interpn_cupy(points, datacube, qi, method=interpolationMethod).reshape((N, N, N))
 
-      # Do Volume Rendering
-      image = cp.zeros((camera_grid.shape[1],camera_grid.shape[2],3))
+      # Apply transfer function to the entire camera grid at once
+      r, g, b, a = transferFunction(cp.log(camera_grid))
 
-      for dataslice in camera_grid:
-        r,g,b,a = transferFunction(cp.log(dataslice))
-        image[:,:,0] = a*r + (1-a)*image[:,:,0]
-        image[:,:,1] = a*g + (1-a)*image[:,:,1]
-        image[:,:,2] = a*b + (1-a)*image[:,:,2]
+      # Initialize image array
+      image = cp.zeros((camera_grid.shape[1], camera_grid.shape[2], 3), dtype=cp.float32)
+
+      # Apply transfer function to each slice of camera_grid
+      image[:, :, 0] = cp.sum(a * r, axis=0)
+      image[:, :, 1] = cp.sum(a * g, axis=0)
+      image[:, :, 2] = cp.sum(a * b, axis=0)
 
       end_gpu.record()
       cp.cuda.stream.get_current_stream().synchronize()
