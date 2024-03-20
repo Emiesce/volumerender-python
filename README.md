@@ -1,4 +1,4 @@
-# Volumerender Project DD2358
+# Volume Render Project - DD2358
 
 ## Introduction
 
@@ -62,7 +62,11 @@ python volumerender_cupy_improved_vectorized.py
 
 ## Data Preparation
 
-The volume rendering scripts requires the `datacube.hdf5` file to be able to execute. 
+The volume rendering scripts require the `datacube.hdf5` file to execute. Within each program, you can calibrate the parameters to specify the number of times you want each `main()` function to run `num_runs`, the number of angles you want to capture `Nangles`, and the specific interpolation method you want to use for the `interpn` function. It is suggested to choose either `linear` or `nearest`, as more sophisticated methods will take too long to execute.
+
+## Output
+
+For our implementations, the expected output is first, all the rendered images will be outputted within the Terminal for every angle that you specified (e.g. if `Nangles = 15`, 15 images each at different angles will be outputted). For each rendered image, the time taken to complete the rendering will also be logged, and for each run of `main()`, aggregate statistics such as Max., Min., Mean and Standard Deviation will be outputted for every run. Finally, after finishing the last run, two line graphs will be outputted, the first outputs a line graph for the duration of each run of `main()`, and the second graph will display the time taken to render each image at each angle for each run. The average time, standard deviation, max. and min. time for all `main()` runs will also be outputted.
 
 ## Performance Profiling
 
